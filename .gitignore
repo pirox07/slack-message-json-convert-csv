@@ -11,5 +11,17 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# Input data
+*.json
+
+# Output data
+*.csv
+
+# build outputs
+parseSlackMessage
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# etc
+.DS_Store
