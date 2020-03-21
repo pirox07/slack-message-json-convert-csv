@@ -63,7 +63,7 @@ func main() {
 	log.Println("----------- start -----------")
 
 	// Create CSV-File
-	file, err := os.OpenFile("./output/SlackMessages.csv", os.O_WRONLY|os.O_CREATE, 0600)
+	file, err := os.OpenFile("./SlackMessages.csv", os.O_WRONLY|os.O_CREATE, 0600)
 	failOnError(err)
 
 	// Initialize
@@ -75,7 +75,7 @@ func main() {
 	writer.Write([]string{"thread_ts", "ts", "real_name", "text"})
 
 	// Get FileName
-	srcFile := dirwalk("./input")
+	srcFile := dirwalk("./")
 
 	for i := 0; i < len(srcFile); i++ {
 		log.Println("Open File: ", srcFile[i])

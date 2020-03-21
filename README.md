@@ -13,21 +13,17 @@ CSV ファイルには以下の情報をフィルタリングして出力しま�
 
 ## 使い方
 
-[ワークスペースのデータをエクスポート](https://slack.com/intl/ja-jp/help/articles/201658943-%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B9%E3%83%9A%E3%83%BC%E3%82%B9%E3%81%AE%E3%83%87%E3%83%BC%E3%82%BF%E3%82%92%E3%82%A8%E3%82%AF%E3%82%B9%E3%83%9D%E3%83%BC%E3%83%88%E3%81%99%E3%82%8B)してください。チャンネル単位でサブフォルダが作成され、 JSON ファイルがエクスポートされます。  
+[ワークスペースのデータをエクスポート](https://slack.com/intl/ja-jp/help/articles/201658943-%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B9%E3%83%9A%E3%83%BC%E3%82%B9%E3%81%AE%E3%83%87%E3%83%BC%E3%82%BF%E3%82%92%E3%82%A8%E3%82%AF%E3%82%B9%E3%83%9D%E3%83%BC%E3%83%88%E3%81%99%E3%82%8B)してください。
 
-目的のチャンネル名のサブフォルダ内に格納されている JSON ファイル( yyyy-mm-dd.json )を、 `source` フォルダ内に保存してください。  
+以下のようにチャンネル単位でサブフォルダが作成され、 JSON ファイルがエクスポートされます。  
 
-実行ファイルをビルドしてください。  
-```
-make
-rm -rf ./parseSlackMessage
-GOOS=linux GOARCH=amd64 go build -o ./parseSlackMessage ./parseSlackMessage.go
-```
-作成された `parseSlackMessage` ファイルを実行してください。
+格納されている JSON ファイル( yyyy-mm-dd.json )を、 `source` フォルダ内に保存してください。  
+
 ```
 ./parseSlackMessage
 ```
- `output` フォルダ内に、 CSV ファイルが作成されます。
+同一フォルダ内に `SlackMessages.csv` ファイルが作成されます。
+
 
 
 ## 参考
