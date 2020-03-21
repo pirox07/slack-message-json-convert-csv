@@ -38,31 +38,34 @@ func unixTimeToJst(unixTimeStamp string) string {
 	return t.String()
 }
 
-func dirwalk(dir string) []string {
+func getFileList(dir string) []string {
 	files, err := ioutil.ReadDir(dir)
 	failOnError(err)
 
 	var paths []string
+
 	for _, file := range files {
-		extension := filepath.Ext(fmt.Sprint(file.Name()))
-		if extension == ".json" {
-			if file.IsDir() {
-				paths = append(paths, dirwalk(filepath.Join(dir, file.Name()))...)
-				continue
+		if !file.IsDir() {
+			//if path.Ext(file.Name()) == ".json" {
+			is_json, err := filepath.Match(`*.json`, file.Name())
+			failOnError(err)
+			if is_json == true {
+				paths = append(paths, file.Name())
+			} else {
+				log.Println(file.Name(), "is not target.")
 			}
-			paths = append(paths, filepath.Join(dir, file.Name()))
-		} else {
-			log.Println(file.Name(), "is Non-Target.")
 		}
 	}
-
 	return paths
 }
 
 func main() {
 	log.Println("----------- start -----------")
 
-	// Create CSV-File
+	// Create CSV file
+	selfPath, _ := os.Executable()
+	prevDir := filepath.Dir(selfPath)
+	os.Chdir(prevDir)
 	file, err := os.OpenFile("./SlackMessages.csv", os.O_WRONLY|os.O_CREATE, 0600)
 	failOnError(err)
 
@@ -75,7 +78,8 @@ func main() {
 	writer.Write([]string{"thread_ts", "ts", "real_name", "text"})
 
 	// Get FileName
-	srcFile := dirwalk("./")
+	fmt.Println("Current dirctory is ", prevDir)
+	srcFile := getFileList(prevDir)
 
 	for i := 0; i < len(srcFile); i++ {
 		log.Println("Open File: ", srcFile[i])
