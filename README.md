@@ -41,7 +41,7 @@ Slack の標準機能を使って[ワークスペースのデータをエクス�
 本リポジトリを Clone もしくは ダウンロードしてください。
 
 
-`./tool` 内の `parseSlackMessage` を、 CSV 形式に変換したいチャンネルのディレクトリ直下に保存・実行すると、
+`./tool` 内の [`parseSlackMessage`](./tool/parseSlackMessage) を、 CSV 形式に変換したいチャンネルのディレクトリ直下に保存・実行すると、
 同一ディレクトリ内に `SlackMessages.csv` が作成されます。
 
 
