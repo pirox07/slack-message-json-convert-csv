@@ -67,6 +67,20 @@ func getFileList(dir string) []string {
 	return paths
 }
 
+func userIDtoName(users []User, userID string) string {
+
+	var userName string
+
+	for _, v := range users {
+		if userID == v.ID {
+			userName = v.Profile.RealName + "/" + v.Profile.DisplayName
+			break
+		}
+	}
+
+	return userName
+}
+
 func main() {
 	log.Println("----------- start -----------")
 
@@ -109,13 +123,8 @@ func main() {
 		for l := 0; l < len(msg); l++ {
 
 			// Convert user ID to user name
-			var userName string
-			for _, v := range users {
-				if msg[l].User == v.ID {
-					userName = v.Profile.RealName + "/" + v.Profile.DisplayName
-					break
-				}
-			}
+			userID := msg[l].User
+			postUserName := userIDtoName(users, userID)
 
 			// Convert mention user ID to user name
 			tmpText := msg[l].Text
@@ -124,19 +133,16 @@ func main() {
 			var mention []string
 			mention = re.FindAllString(tmpText, -1)
 			for n := 0; n < len(mention); n++ {
-				userID := strings.TrimLeft(mention[n], "<@")
+				userID = strings.TrimLeft(mention[n], "<@")
 				userID = strings.TrimRight(userID, ">")
-				for _, v := range users {
-					if v.ID == userID {
-						tmpText = strings.Replace(tmpText, mention[n], "<@"+v.Profile.RealName+"/"+v.Profile.DisplayName+">", 1)
-					}
-				}
+				mentionUserName := userIDtoName(users, userID)
+				tmpText = strings.Replace(tmpText, mention[n], "<@"+mentionUserName+">", 1)
 			}
 
 			writer.Write([]string{
 				msg[l].ThreadTs,
 				unixTimeToJst(msg[l].Ts),
-				userName,
+				postUserName,
 				tmpText})
 			writer.Flush()
 		}
