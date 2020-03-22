@@ -8,17 +8,25 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
 type Message struct {
-	Ts          string `json:"ts"`
-	Text        string `json:"text"`
-	UserProfile struct {
-		RealName string `json:"real_name"`
-	} `json:"user_profile"`
+	Ts       string `json:"ts"`
+	Text     string `json:"text"`
+	User     string `json:"user"`
 	ThreadTs string `json:"thread_ts"`
+}
+
+type User struct {
+	ID      string `json:"id"`
+	Profile struct {
+		RealName    string `json:"real_name"`
+		DisplayName string `json:"display_name"`
+	} `json:"profile"`
 }
 
 func failOnError(err error) {
@@ -75,11 +83,18 @@ func main() {
 
 	// Set Header
 	writer := csv.NewWriter(file)
-	writer.Write([]string{"thread_ts", "ts", "real_name", "text"})
+	writer.Write([]string{"thread_ts", "ts", "user_name", "text"})
 
 	// Get FileName
 	fmt.Println("Current dirctory is ", prevDir)
 	srcFile := getFileList(prevDir)
+
+	jsonString, err := ioutil.ReadFile("../users.json")
+	failOnError(err)
+
+	var users []User
+	err = json.Unmarshal(jsonString, &users)
+	failOnError(err)
 
 	for i := 0; i < len(srcFile); i++ {
 		log.Println("Open File: ", srcFile[i])
@@ -92,11 +107,37 @@ func main() {
 		failOnError(err)
 
 		for l := 0; l < len(msg); l++ {
+
+			// Convert user ID to user name
+			var userName string
+			for _, v := range users {
+				if msg[l].User == v.ID {
+					userName = v.Profile.RealName + "/" + v.Profile.DisplayName
+					break
+				}
+			}
+
+			// Convert mention user ID to user name
+			tmpText := msg[l].Text
+			re := regexp.MustCompile("<@" + `\w+` + ">")
+
+			var mention []string
+			mention = re.FindAllString(tmpText, -1)
+			for n := 0; n < len(mention); n++ {
+				userID := strings.TrimLeft(mention[n], "<@")
+				userID = strings.TrimRight(userID, ">")
+				for _, v := range users {
+					if v.ID == userID {
+						tmpText = strings.Replace(tmpText, mention[n], "<@"+v.Profile.RealName+"/"+v.Profile.DisplayName+">", 1)
+					}
+				}
+			}
+
 			writer.Write([]string{
 				msg[l].ThreadTs,
 				unixTimeToJst(msg[l].Ts),
-				msg[l].UserProfile.RealName,
-				msg[l].Text})
+				userName,
+				tmpText})
 			writer.Flush()
 		}
 	}
