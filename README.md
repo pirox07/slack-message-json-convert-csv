@@ -2,28 +2,47 @@
 
 ## ツールの概要
 
-Slack に投稿されたメッセージを JSON 形式でエクスポート後、 CSV 形式に変換するための簡易ツールです。  
+Slack の**データのエクスポート機能**により各チャンネルのメッセージを JSON 形式でエクスポートしたデータを、 **CSV 形式に変換**するためのツールです。
+
 CSV ファイルには以下の情報をフィルタリングして出力します。  
-- thread_ts ... スレッド ID （同一スレッドへの投稿は、同一 thread_ts が割り当てられる）
+- thread_ts ... スレッドの ID 
 - ts ... タイムスタンプ ( JST )
-- real_name ... ユーザ名
+- user_name ... ユーザ名( real_name + display_name )
 - text ... 投稿メッセージ
 
-※ Mac での実行を想定しています。
+本ツールでは Mac OS での利用を想定しています。
 
 ## 使い方
 
-[ワークスペースのデータをエクスポート](https://slack.com/intl/ja-jp/help/articles/201658943-%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B9%E3%83%9A%E3%83%BC%E3%82%B9%E3%81%AE%E3%83%87%E3%83%BC%E3%82%BF%E3%82%92%E3%82%A8%E3%82%AF%E3%82%B9%E3%83%9D%E3%83%BC%E3%83%88%E3%81%99%E3%82%8B)してください。
+### データのエクスポート
+Slack の標準機能を使って[ワークスペースのデータをエクスポート](https://slack.com/intl/ja-jp/help/articles/201658943-%E3%83%AF%E3%83%BC%E3%82%AF%E3%82%B9%E3%83%9A%E3%83%BC%E3%82%B9%E3%81%AE%E3%83%87%E3%83%BC%E3%82%BF%E3%82%92%E3%82%A8%E3%82%AF%E3%82%B9%E3%83%9D%E3%83%BC%E3%83%88%E3%81%99%E3%82%8B)してください。  
 
-以下のようにチャンネル単位でサブフォルダが作成され、 JSON ファイルがエクスポートされます。  
-
-格納されている JSON ファイル( yyyy-mm-dd.json )を、 `source` フォルダ内に保存してください。  
+エクスポートデータは以下のような構造となっています。  
 
 ```
-./parseSlackMessage
-```
-同一フォルダ内に `SlackMessages.csv` ファイルが作成されます。
+<Workspace Name> Slack export <term>
+├ user.josn
+├ channels.json
+├ integration_logs.json 
+├ channel-01
+│  ├ yyyy-mm-dd.json
+│  └ yyyy-mm-dd.json
+└ channel-02
+   └ yyyy-mm-dd.json
 
+※ Free プランの場合
+```
+本ツールでは `user.json` (ワークスペースに参加しているメンバーの情報)及び各チャンネルに投稿されたメッセージが保存されている `yyyy-mm-dd.json` をインプットとして使用します。
+
+
+
+### 変換ツールの実行
+
+本リポジトリを Clone もしくは ダウンロードしてください。
+
+
+`./tool` 内の `parseSlackMessage` を、 CSV 形式に変換したいチャンネルのディレクトリ直下に保存・実行すると、
+同一ディレクトリ内に `SlackMessages.csv` が作成されます。
 
 
 ## 参考
