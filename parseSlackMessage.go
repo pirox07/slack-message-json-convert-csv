@@ -12,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"4d63.com/tz"
 )
 
 type Message struct {
@@ -36,7 +38,7 @@ func failOnError(err error) {
 }
 
 func unixTimeToJst(unixTimeStamp string) string {
-	loc, err := time.LoadLocation("Asia/Tokyo")
+	loc, err := tz.LoadLocation("Asia/Tokyo")
 	failOnError(err)
 
 	f64, _ := strconv.ParseFloat(unixTimeStamp, 64)
@@ -88,8 +90,9 @@ func main() {
 	selfPath, _ := os.Executable()
 	prevDir := filepath.Dir(selfPath)
 	os.Chdir(prevDir)
-	file, err := os.OpenFile("./SlackMessages.csv", os.O_WRONLY|os.O_CREATE, 0600)
+	file, err := os.OpenFile("SlackMessages.csv", os.O_WRONLY|os.O_CREATE, 0666)
 	failOnError(err)
+	defer file.Close()
 
 	// Initialize
 	err = file.Truncate(0)
@@ -98,6 +101,7 @@ func main() {
 	// Set Header
 	writer := csv.NewWriter(file)
 	writer.Write([]string{"thread_ts", "ts", "user_name", "text"})
+	writer.Flush()
 
 	// Get FileName
 	fmt.Println("Current dirctory is ", prevDir)
@@ -144,7 +148,10 @@ func main() {
 				unixTimeToJst(msg[l].Ts),
 				postUserName,
 				tmpText})
+			fmt.Println("set shimasita")
+
 			writer.Flush()
+
 		}
 	}
 
