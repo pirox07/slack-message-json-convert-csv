@@ -1,3 +1,7 @@
+# Binaries for programs and plugins
+slack-message-json-convert-csv
+slack-message-json-convert-csv.exe
+
 # Test binary, built with `go test -c`
 *.test
 
