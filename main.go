@@ -148,7 +148,6 @@ func main() {
 				unixTimeToJst(msg[l].Ts),
 				postUserName,
 				tmpText})
-			fmt.Println("set shimasita")
 
 			writer.Flush()
 
